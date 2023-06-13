@@ -12,6 +12,7 @@
 namespace TwentyTwoDigital\CashierFastspring\Listeners;
 
 use TwentyTwoDigital\CashierFastspring\Events;
+use TwentyTwoDigital\CashierFastspring\Helper\ConfigHelper;
 use TwentyTwoDigital\CashierFastspring\Subscription;
 
 /**
@@ -51,8 +52,10 @@ class SubscriptionStateChanged extends Base
         // create
         $subscription = Subscription::where('fastspring_id', $data['id'])->firstOrFail();
 
+        $userId = ConfigHelper::getBillableModelRelationalKey();
+
         // fill
-        $subscription->user_id = $this->getUserByFastspringId($data['account']['id'])->id;
+        $subscription->$userId = $this->getUserByFastspringId($data['account']['id'])->id;
         $subscription->plan = $data['product']['product'];
         $subscription->state = $data['state'];
         $subscription->currency = $data['currency'];

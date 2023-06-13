@@ -11,7 +11,8 @@
 
 namespace TwentyTwoDigital\CashierFastspring\Listeners;
 
-use TwentyTwoDigital\CashierFastspring\Events;
+ use TwentyTwoDigital\CashierFastspring\Events;
+use TwentyTwoDigital\CashierFastspring\Helper\ConfigHelper;
 use TwentyTwoDigital\CashierFastspring\Subscription;
 use TwentyTwoDigital\CashierFastspring\SubscriptionPeriod;
 
@@ -50,6 +51,7 @@ class SubscriptionActivated extends Base
     public function handle(Events\SubscriptionActivated $event)
     {
         $data = $event->data;
+        $userId = ConfigHelper::getBillableModelRelationalKey();
 
         // first look for is there any subscription
         $user = $this->getUserByFastspringId($data['account']['id']);
@@ -59,7 +61,7 @@ class SubscriptionActivated extends Base
 
         if (!$subscription) {
             $subscription = new Subscription();
-            $subscription->user_id = $user->id;
+            $subscription->$userId = $user->id;
             $subscription->name = $subscriptionName;
         }
 

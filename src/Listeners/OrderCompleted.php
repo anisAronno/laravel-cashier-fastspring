@@ -15,6 +15,7 @@
 namespace TwentyTwoDigital\CashierFastspring\Listeners;
 
 use TwentyTwoDigital\CashierFastspring\Events;
+use TwentyTwoDigital\CashierFastspring\Helper\ConfigHelper;
 use TwentyTwoDigital\CashierFastspring\Invoice;
 
 /**
@@ -59,9 +60,10 @@ class OrderCompleted extends Base
         $periodStartDate = $subscription['nextInSeconds'];
         $periodEndDate = $subscription['beginInSeconds'];
 
+        $userId = ConfigHelper::getBillableModelRelationalKey();
         // fill the model
         $invoice->subscription_sequence = $subscription['sequence'];
-        $invoice->user_id = $this->getUserByFastspringId($data['account']['id'])->id;
+        $invoice->$userId = $this->getUserByFastspringId($data['account']['id'])->id;
         $invoice->subscription_display = $subscription['display'];
         $invoice->subscription_product = $subscription['product'];
         $invoice->invoice_url = $data['invoiceUrl'];

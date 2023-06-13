@@ -16,6 +16,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use LogicException;
 use TwentyTwoDigital\CashierFastspring\Fastspring\Fastspring;
+use TwentyTwoDigital\CashierFastspring\Helper\DynamicTableName;
 
 /**
  * This class describes a subscription.
@@ -47,6 +48,10 @@ class Subscription extends Model
      */
     protected $billingCycleAnchor = null;
 
+    public function getTable()
+    {
+        return DynamicTableName::getTableName(self::class) ?: parent::getTable();
+    }
     /**
      * Get the user that owns the subscription.
      */

@@ -12,7 +12,8 @@
 namespace TwentyTwoDigital\CashierFastspring;
 
 use Illuminate\Database\Eloquent\Model;
-
+use TwentyTwoDigital\CashierFastspring\Helper\DynamicTableName;
+ 
 /**
  * This class describes an invoice.
  *
@@ -38,6 +39,11 @@ class Invoice extends Model
         'subscription_period_start_date',
         'subscription_period_end_date',
     ];
+
+    public function getTable()
+    {
+        return DynamicTableName::getTableName(self::class) ?: parent::getTable();
+    }
 
     /**
      * Get the user that owns the invoice.

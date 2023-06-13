@@ -3,9 +3,17 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class UpgradeUserTableForCashierFastspring extends Migration
 {
+    private $table;
+
+    public function __construct()
+    {
+        $billableModel = getenv('FASTSPRING_MODEL') ?: config('services.fastspring.model', 'App\Models\User');
+        $this->table = Str::snake(Str::plural(class_basename($billableModel)));
+    }
     /**
      * Run the migrations.
      *
@@ -13,7 +21,7 @@ class UpgradeUserTableForCashierFastspring extends Migration
      */
     public function up()
     {
-        Schema::table('users', function($table) {
+        Schema::table($this->table, function ($table) {
             $table->string('fastspring_id')->nullable();
             $table->string('company')->nullable();
             $table->string('phone')->nullable();
@@ -29,7 +37,7 @@ class UpgradeUserTableForCashierFastspring extends Migration
      */
     public function down()
     {
-        Schema::table('users', function(Blueprint $table) {
+        Schema::table($this->table, function (Blueprint $table) {
             $table->dropColumn(['fastspring_id', 'company', 'phone', 'language', 'country']);
         });
     }

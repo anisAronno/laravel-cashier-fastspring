@@ -12,8 +12,9 @@
 namespace TwentyTwoDigital\CashierFastspring\Listeners;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
+ use Illuminate\Support\Str;
 use TwentyTwoDigital\CashierFastspring\Events;
+use TwentyTwoDigital\CashierFastspring\Helper\ConfigHelper;
 use TwentyTwoDigital\CashierFastspring\Invoice;
 use TwentyTwoDigital\CashierFastspring\Subscription;
 
@@ -69,10 +70,11 @@ class SubscriptionChargeCompleted extends Base
         // yeap, weird way
         $methodName = 'sub' . Str::title($subscription->interval_unit) . 'sNoOverflow';
         $periodStartDate = $nextDate->$methodName($subscription->interval_length)->addDay()->format('Y-m-d H:i:s');
+        $userId = ConfigHelper::getBillableModelRelationalKey();
 
         // fill the model
         $invoice->subscription_sequence = $data['subscription']['sequence'];
-        $invoice->user_id = $this->getUserByFastspringId($data['account']['id'])->id;
+        $invoice->$userId = $this->getUserByFastspringId($data['account']['id'])->id;
         $invoice->subscription_display = $data['subscription']['display'];
         $invoice->subscription_product = $data['subscription']['product'];
         $invoice->invoice_url = $data['order']['invoiceUrl'];

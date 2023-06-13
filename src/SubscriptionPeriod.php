@@ -12,6 +12,7 @@
 namespace TwentyTwoDigital\CashierFastspring;
 
 use Illuminate\Database\Eloquent\Model;
+use TwentyTwoDigital\CashierFastspring\Helper\DynamicTableName;
 
 /**
  * This class describes a subscription period.
@@ -36,6 +37,11 @@ class SubscriptionPeriod extends Model
         'start_date', 'end_date',
         'created_at', 'updated_at',
     ];
+
+    public function getTable()
+    {
+        return DynamicTableName::getTableName(self::class) ?: parent::getTable();
+    }
 
     /**
      * Get the user that owns the subscription.

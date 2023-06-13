@@ -1,11 +1,21 @@
 <?php
 
+
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use TwentyTwoDigital\CashierFastspring\Helper\ConfigHelper;
+use TwentyTwoDigital\CashierFastspring\Helper\DynamicTableName;
 
 class CreateSubscriptionsTableForCashierFastspring extends Migration
 {
+    private $table;
+
+    public function __construct()
+    {
+        $this->table = DynamicTableName::getTableName('Subscription') ?? 'subscriptions';
+    }
     /**
      * Run the migrations.
      *
@@ -13,9 +23,11 @@ class CreateSubscriptionsTableForCashierFastspring extends Migration
      */
     public function up()
     {
-        Schema::create('subscriptions', function(Blueprint $table) {
+        $userId = ConfigHelper::getBillableModelRelationalKey();
+
+        Schema::create($this->table, function (Blueprint $table) use ($userId) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger($userId);
             $table->string('name');
             $table->string('fastspring_id')->nullable();
             $table->string('plan');
@@ -28,7 +40,7 @@ class CreateSubscriptionsTableForCashierFastspring extends Migration
             $table->datetime('swap_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign($userId)->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -39,6 +51,6 @@ class CreateSubscriptionsTableForCashierFastspring extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subscriptions');
+        Schema::dropIfExists($this->table);
     }
 }
